@@ -9,11 +9,13 @@ import com.example.demo.entity.InterestRate;
 
 @Service
 public interface InterestService {
-	InterestRateDto saveInterest(InterestRateDto interestRate);
+	InterestRate saveInterest(InterestRate interestRate);
 
 	List<InterestRate> getAll();
 
 	InterestRate updateInterest(InterestRate rate);
 
 	Object deleteInterest(int interestId);
+
+	Object getById(int interestID);
 }

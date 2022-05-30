@@ -4,6 +4,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -22,7 +26,7 @@ import com.example.demo.service.InterestServiceImpl;
 @SpringBootTest
 public class ServiceTest {
 
-	@Autowired
+	@InjectMocks
 	private ModelMapper mapper;
 	
 	@InjectMocks
@@ -32,13 +36,11 @@ public class ServiceTest {
 	
 	@Test
 	public void saveInterest() {
-		InterestRateDto dto = dummyInterestRate();
-		InterestRate rate = new InterestRate();
-		rate=mapper.map(dto,InterestRate.class);
+		InterestRate rate = dummyInterestRates();
 		when(repository.save(rate)).thenReturn(rate);
-		InterestRateDto response = service.saveInterest(dto);
+		InterestRate response = service.saveInterest(rate);
 		assertNotNull(response);
-		assertEquals(response, dto);
+		assertEquals(response, rate);
 		
 	}
 	
@@ -55,6 +57,41 @@ public class ServiceTest {
 		assertEquals(interestRate, rate);
 	}
 	
+	@Test
+	public void test_findAll() {
+		InterestRate rate = dummyInterestRates();
+		List<InterestRate> rateList = new ArrayList<>();
+		rateList.add(rate);
+		when(repository.findAll()).thenReturn(rateList);
+		List<InterestRate> response = service.getAll();
+		assertNotNull(response);
+		assertEquals(response.size(), rateList.size());
+	}
+	
+	
+	@Test
+	public void test_deleteInterest() {
+		
+		InterestRate rate = dummyInterestRates();
+		rate.setDelete(true);
+		when(repository.save(rate)).thenReturn(rate);
+		Object response = service.deleteInterest(rate.getInterestId());
+		assertNotNull(response);
+		System.out.println(response);
+		assertEquals(response,"Given data not exist");
+		
+		
+	}
+	
+	@Test
+	public void test_getById() {
+		
+		Optional<InterestRate> rate = Optional.of(dummyInterestRates());
+		when(repository.findById(1)).thenReturn(rate);
+		Object response = service.getById(1);
+		assertNotNull(response);
+		assertEquals(response, rate);
+	}
 	
 	private InterestRateDto dummyInterestRate() {
 		InterestRateDto interestRateDto = new InterestRateDto();
@@ -66,5 +103,17 @@ public class ServiceTest {
 		interestRateDto.setValidTill("04-01-2030");
 		interestRateDto.setCurrency("INR");
 		return interestRateDto;
+	}
+	
+	private InterestRate dummyInterestRates() {
+		InterestRate interestRate = new InterestRate();
+		interestRate.setInterestId(1);
+		interestRate.setDescription("TempInteresECOMINTERESTSILVERCARDtRatesGold description");
+		interestRate.setName("ECOMINTERESTSILVERCARD1");
+		interestRate.setRateSpecificationCode("ECOMINTERESTSILVERCARD1");
+		interestRate.setValidFrom("02-01-2020");
+		interestRate.setValidTill("04-01-2030");
+		interestRate.setCurrency("INR");
+		return interestRate;
 	}
 }

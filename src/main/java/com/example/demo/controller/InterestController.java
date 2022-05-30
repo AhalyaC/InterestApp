@@ -2,7 +2,10 @@ package com.example.demo.controller;
 
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,10 +24,15 @@ public class InterestController {
     @Autowired
     private InterestService service;
     
+    @Autowired
+    private ModelMapper modelMapper;
+    
     @PostMapping("/save-interest")
-    public InterestRateDto saveInterest(@RequestBody InterestRateDto interestRate){
-        InterestRateDto rate = service.saveInterest(interestRate);
-        return rate;
+    public ResponseEntity<InterestRateDto>createIntrestApp1(@RequestBody InterestRateDto interestRateDTO){
+    	InterestRate interestRate = modelMapper.map(interestRateDTO, InterestRate.class);
+    	InterestRate intrestApp11 = service.saveInterest(interestRate);
+    	InterestRateDto intrestApprequest1 = modelMapper.map(interestRate, InterestRateDto.class);
+        return new ResponseEntity<InterestRateDto>(intrestApprequest1, HttpStatus.CREATED);
     }
     
     @GetMapping("/get-all")
@@ -37,6 +45,11 @@ public class InterestController {
 		rate.setInterestId(intersestId);
     	return service.updateInterest(rate);
     	
+    }
+    
+    @GetMapping("/get-interest-byid/{id}")
+    public Object getInterestById(@PathVariable("id") int interestID) {
+    	return service.getById(interestID);
     }
     
     @GetMapping("/delete-interest/{interestId}")

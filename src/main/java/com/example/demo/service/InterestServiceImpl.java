@@ -14,24 +14,20 @@ import com.example.demo.repository.InterestRepository;
 @Service
 public class InterestServiceImpl implements InterestService{
 
-    @Autowired
-    private InterestRepository interestRepository;
-    
-    @Autowired
-    private ModelMapper modelMapper;
-   
-    @Override
-    public InterestRateDto saveInterest(InterestRateDto interestRateDto) {
-    	InterestRate interstRate = new InterestRate();
-    	interstRate=modelMapper.map(interestRateDto,InterestRate.class);
-    	interestRepository.save(interstRate);
-    	interestRateDto=modelMapper.map(interstRate, InterestRateDto.class);
-    	return interestRateDto;
-    }
+	@Autowired
+	private InterestRepository interestRepository;
+
+	@Autowired
+	private ModelMapper modelMapper;
+
+	@Override
+	public InterestRate saveInterest(InterestRate interestRate) {
+		return interestRepository.save(interestRate);
+	}
 
 	@Override
 	public List<InterestRate> getAll() {
-		
+
 		return interestRepository.findAll();
 	}
 
@@ -42,17 +38,26 @@ public class InterestServiceImpl implements InterestService{
 
 	@Override
 	public Object deleteInterest(int interestId) {
-		//boolean status = false;
 		InterestRate rate = new InterestRate();
 		if(0!=interestId) {
 			try {
-			rate=interestRepository.findById(interestId).get();
+				rate=interestRepository.findById(interestId).get();
 			}catch (Exception e) {
 				return "Given data not exist";
 			}
 			rate.setDelete(true);
 			interestRepository.save(rate);
 		}
-		return rate;
+		return "Given data is deleted successfully";
+	}
+
+	@Override
+	public Object getById(int interestID) {
+		Optional<InterestRate> rate = interestRepository.findById(interestID);
+		try {
+			return rate;
+		}catch (Exception e) {
+			return "Given data not exist";
+		}
 	}
 }
